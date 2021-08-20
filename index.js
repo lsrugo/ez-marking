@@ -2,7 +2,7 @@
 import './style.css';
 
 // for csv import
-var papaparse = require('papaparse');
+import papaparse from 'papaparse';
 
 const SUPABASE_URL = 'https://nbdlywnhcnecjobtgncc.supabase.co';
 const SUPABASE_ANON_KEY =
