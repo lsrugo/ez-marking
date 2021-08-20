@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- This example requires Tailwind CSS v2.0+ -->
+  <nav class="bg-gray-800 sticky top-0">
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+      <div class="relative flex items-center justify-between h-16">
+        <div class="flex-1 flex items-center items-stretch justify-start">
+          <div class="block ml-6">
+            <div class="flex space-x-4">
+              <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+              <button class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" id="home-button"
+                aria-current="page">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+              </button>
+
+              <button id="history-button"
+                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </button>
+
+              <!-- TODO: change button classes when selected -->
+              <button id="import-button" onclick="document.querySelector('#import').classList.toggle('hidden');"
+                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+              </button>
+
+              <button id="signOut"
+                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button type="submit" form="students-form" id="submit"
+          class="flex p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white mr-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Submit</button>
+      </div>
+    </div>
+    </div>
+  </nav>
+
+  <!-- loading circle -->
+  <svg id="loading" class="animate-spin h-20 w-20 mx-auto mt-10 text-gray-800" xmlns="http://www.w3.org/2000/svg"
+    fill="none" viewBox="0 0 24 24">
+    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+    <path class="opacity-75" fill="currentColor"
+      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+    </path>
+  </svg>
+
+  <main class="p-4 text-gray-700 hidden">
+  <!-- <main class="p-4 text-gray-700"> -->
+    <form id="import" class="hidden text-center mb-2 flex flex-col space-y-1 items-center border-2 border-gray-300 rounded-md p-3 shadow-md bg-gray-50">
+    <!-- <form id="import" class="text-center mb-2 flex flex-col space-y-1 items-center border-2 border-gray-300 rounded-md p-3 shadow-md bg-gray-50"> -->
+      <label for="csv-import" class="mr-1 pb-0.5">Select a csv file to import students:
+        <input type="file" accept="text/csv" id="csv-import" name="csv" style="width: 101px;" required>
+      </label>
+
+      <label for="images-import" class="mr-1 pb-0.5">Select the images which are specified in the csv:
+        <input type="file" accept="image/*" name="images" id="images-import" style="width: 109px;" multiple required>
+      </label>
+
+      <button type="submit" class="px-4 py-2 w-max text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Import Students</button>
+    </form>
+
+    <div id="history" class="hidden flex justify-center items-center mb-3">
+      <label for="history-date" class="mr-1 pb-0.5">Choose a date and time to see history:</label>
+      <input type="date" id="history-date">
+      <select id="history-time-select">
+        <!-- available times for the selected date are loaded here -->
+      </select>
+    </div>
+
+    <p class="text-center italic pb-2 text-xs text-gray-400" id="marking-instructions">Tap students to mark as
+      present. Submit when you are done</p>
+    <div class="rounded-md border-2 mx-auto p-2 bg-gray-100 lg:w-3/4">
+      <form id="students-form">
+        <div class="flex flex-row flex-wrap justify-around content-evenly" id="flex-container">
+
+          <!-- student elements are inserted here -->
+
+        </div>
+      </form>
+      <div id="no-data" class="hidden text-center text-gray-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 inline" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd" />
+        </svg>
+        <p class="inline">No data found for this date. Choose another date.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- student element -->
+  <template id="student">
+    <div class="border-2 border-gray-300 shadow rounded-lg w-20 p-1 mb-2 mx-2 bg-white transition-opacity duration-200">
+
+      <img alt="student picture" class="block rounded-full border-2 border-gray-200 w-20 mx-auto" src="https://picsum.photos/400/400/?random">
+
+      <h1 class="mt-1 text-sm text-center break-words">
+        Student Name
+      </h1>
+      <input type="hidden" value="false">
+
+      <div class="flex items-center justify-center mt-0.5">
+
+        <!-- present and absent icons are inserted here -->
+
+      </div>
+    </div>
+  </template>
+
+  <template id="absent-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+        clip-rule="evenodd" />
+    </svg>
+  </template>
+
+  <form id="signin" class="flex flex-col items-center space-y-2 bg-gray-50 p-2 pb-6">
+    <h2 class="mb-2 mt-4 text-center text-3xl font-bold text-gray-800">
+      Sign in to your account
+    </h2>
+    <p id="signin-message" class="text-red-600 italic"></p>
+    <div class="rounded-md shadow-sm -space-y-px">
+      <div>
+        <label for="email-address" class="sr-only">Email address</label>
+        <input id="email-address" name="email" type="email" autocomplete="username" required class="appearance-none rounded-none relative block w-60 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email address">
+      </div>
+      <div>
+        <label for="password" class="sr-only">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-60 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
+      </div>
+    </div>
+    <div>
+      <button type="submit" class="group relative w-60 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+          <!-- Heroicon name: solid/lock-closed -->
+          <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+          </svg>
+        </span>
+        Sign in
+      </button>
+    </div>
+  </form>
+
+</body>
+<script src="index.js"></script>
+
+</html>
