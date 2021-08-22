@@ -1,6 +1,3 @@
-// Import stylesheets
-import './style.css';
-
 // for csv import
 import papaparse from 'papaparse';
 
@@ -16,28 +13,39 @@ document.querySelector('#signin').addEventListener('submit', async e => {
 
   loading(true);
 
-  const { error } = await supabase.auth.signIn({
+  const { user, error } = await supabase.auth.signIn({
     email: e.target.querySelector('input[type="email"]').value,
     password: e.target.querySelector('input[type="password"]').value
   });
-
+  
   if (error) {
     document.querySelector('#loading').classList.add('hidden');
     document.querySelector('#signin-message').textContent = error.message;
     console.error(error);
     return;
   }
-
+  
+  if (!user) {
+    document.querySelector('#signin-message').textContent = 'Check your email for a sign in link';
+    loading(false);
+    return
+  }
+  
   e.target.classList.add('hidden');
   loadStudents(markStudent);
 });
 
-if (supabase.auth.user()) {
-  console.log('signed in as', supabase.auth.user().email);
-  // hide sign in element if signed in
-  document.querySelector('#signin').classList.add('hidden');
-  loadStudents(markStudent);
-} else {
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log(event, session)
+  if (event === "SIGNED_IN") {
+    console.log('signed in as', session.user.email);
+    // hide sign in element if signed in
+    document.querySelector('#signin').classList.add('hidden');
+    loadStudents(markStudent);
+  }
+})
+
+if (!supabase.auth.user()) {
   console.log('not signed in');
   document.querySelector('#loading').classList.add('hidden');
   // sign in screen is already visible by default
@@ -87,6 +95,8 @@ function addStudent(student, clickFunction) {
       'https://res.cloudinary.com/drdp6txb7/image/upload/v1629413004/students/' +
       student.photo_url +
       '.webp';
+  } else {
+    newNode.querySelector('img').remove();
   }
 
   if (clickFunction) {
@@ -381,7 +391,7 @@ document.querySelector('#import').addEventListener('submit', async e => {
       const students = r.data.map(v => ({
         name: v.First + ' ' + v.Last,
         hebrew: v['Hebrew first'] + ' ' + v['Hebrew last'],
-        photo_url: imagesMap[v['File name']]
+        photo_url: imagesMap[v['File name']] || null
       }));
 
       // console.log(students);

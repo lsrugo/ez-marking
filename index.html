@@ -5,6 +5,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* System Fonts as used by GitHub */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    }
+  </style>
 </head>
 
 <body>
@@ -71,7 +77,7 @@
 
   <main class="p-4 text-gray-700 hidden">
   <!-- <main class="p-4 text-gray-700"> -->
-    <form id="import" class="hidden text-center mb-2 flex flex-col space-y-1 items-center border-2 border-gray-300 rounded-md p-3 shadow-md bg-gray-50">
+    <form id="import" class="hidden text-center mb-2 flex flex-col space-y-1 items-center border-2 border-gray-300 rounded-md p-3 shadow-md bg-gray-50 lg:w-3/4 mx-auto">
     <!-- <form id="import" class="text-center mb-2 flex flex-col space-y-1 items-center border-2 border-gray-300 rounded-md p-3 shadow-md bg-gray-50"> -->
       <label for="csv-import" class="mr-1 pb-0.5">Select a csv file to import students:
         <input type="file" accept="text/csv" id="csv-import" name="csv" style="width: 101px;" required>
@@ -117,7 +123,7 @@
   <template id="student">
     <div class="border-2 border-gray-300 shadow rounded-lg w-20 p-1 mb-2 mx-2 bg-white transition-opacity duration-200">
 
-      <img alt="student picture" class="block rounded-full border-2 border-gray-200 w-20 mx-auto" src="https://picsum.photos/400/400/?random">
+      <img alt="student picture" class="block rounded-full border-2 border-gray-200 w-20 mx-auto">
 
       <h1 class="mt-1 text-sm text-center break-words">
         Student Name
@@ -152,7 +158,7 @@
       </div>
       <div>
         <label for="password" class="sr-only">Password</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-60 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
+        <input id="password" name="password" type="password" autocomplete="current-password" class="appearance-none rounded-none relative block w-60 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
       </div>
     </div>
     <div>
