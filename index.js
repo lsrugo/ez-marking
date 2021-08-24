@@ -65,7 +65,10 @@ document.querySelector('#signOut').addEventListener('click', async () => {
 async function loadStudents(clickFunction) {
   loading(true);
 
-  const { data, error } = await supabase.from('Students').select();
+  const { data, error } = await supabase
+    .from('Students')
+    .select()
+    .order('h_last_name', { ascending: true });
 
   if (error) {
     loading(false);
