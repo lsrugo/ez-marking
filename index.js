@@ -93,8 +93,7 @@ function addStudent(student, clickFunction) {
   if (student.photo_url) {
     newNode.querySelector('img').src =
       'https://res.cloudinary.com/drdp6txb7/image/upload/v1629413004/students/' +
-      student.photo_url +
-      '.webp';
+      student.photo_url;
   } else {
     newNode.querySelector('img').remove();
   }
