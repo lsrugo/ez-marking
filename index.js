@@ -25,6 +25,7 @@ document.querySelector('#signin').addEventListener('submit', async e => {
     return;
   }
   
+  // magic login link was sent if no password was provided
   if (!user) {
     document.querySelector('#signin-message').textContent = 'Check your email for a sign in link';
     loading(false);
@@ -45,6 +46,7 @@ supabase.auth.onAuthStateChange((event, session) => {
   }
 })
 
+// hide loading once JS is ready and if no user is signed in
 if (!supabase.auth.user()) {
   console.log('not signed in');
   document.querySelector('#loading').classList.add('hidden');
@@ -62,9 +64,14 @@ document.querySelector('#signOut').addEventListener('click', async () => {
   location.reload();
 });
 
+/**
+ * Load students and create new element for each one
+ * @param {function} clickFunction - click handler for each student card element
+ */
 async function loadStudents(clickFunction) {
   loading(true);
 
+  // select all students ordered by hebrew last name
   const { data, error } = await supabase
     .from('Students')
     .select()
@@ -83,13 +90,23 @@ async function loadStudents(clickFunction) {
   loading(false);
 }
 
+/**
+ * create a new card element from student object and add onto page
+ * @param {object} student - student object
+ * @param {number} student.id - database id
+ * @param {string} student.name - full english name
+ * @param {string} student.hebrew - full hebrew name
+ * @param {string} student.photo_url - url for photo in cloudinary
+ * @param {function} clickFunction - click handler for card element
+ */
 function addStudent(student, clickFunction) {
+  // create new card element from student template node
   let newNode = document.querySelector('#student').content.cloneNode(true);
   newNode.querySelector('div').id = student.id;
   newNode.querySelector('input').name = student.id;
   let name = student.name;
   if (student.hebrew) {
-    // if hebrew name is set
+    // if hebrew name is set use it instead
     name = student.hebrew;
   }
   newNode.querySelector('h1').textContent = name;
@@ -118,8 +135,6 @@ function markStudent(e) {
     e.currentTarget.classList.add('hidden');
   });
   e.currentTarget.querySelector('input').value = true;
-
-  // console.log(e.currentTarget.id); // for debugging
 }
 
 document.querySelector('#students-form').addEventListener('submit', async e => {
@@ -147,8 +162,8 @@ document.querySelector('#students-form').addEventListener('submit', async e => {
   let formData = new FormData(e.target);
   for (let item of formData) {
     data.push({
-      student: item[0],
-      attended: item[1],
+      student: item[0], // student id
+      attended: item[1], // boolean whether they were present
       time: timeId
     });
   }
@@ -164,17 +179,18 @@ document.querySelector('#students-form').addEventListener('submit', async e => {
     alert('submit success!');
   }
 
+  // clear screen and reload all students
   document.querySelector('#flex-container').replaceChildren();
   loadStudents(markStudent);
 });
 
+// highlight the selected menu item when it is clicked
 const defaultMenuClasses = [
   'text-gray-300',
   'hover:bg-gray-700',
   'hover:text-white'
 ];
 const selectedMenuClasses = ['bg-gray-900', 'text-white'];
-
 document.querySelector('#home-button').addEventListener('click', e => {
   e.currentTarget.classList.remove(...defaultMenuClasses);
   e.currentTarget.classList.add(...selectedMenuClasses);
@@ -187,7 +203,7 @@ document.querySelector('#home-button').addEventListener('click', e => {
   // clear date and time selectors
   document.querySelector('#history-date').value = '';
   document.querySelector('#history-time-select').value = '';
-
+  // hide history menu and show marking info
   document.querySelector('#history').classList.add('hidden');
   document.querySelector('#marking-instructions').classList.remove('hidden');
 
@@ -203,7 +219,7 @@ document.querySelector('#history-button').addEventListener('click', e => {
   const homeBtn = document.querySelector('#home-button');
   homeBtn.classList.remove(...selectedMenuClasses);
   homeBtn.classList.add(...defaultMenuClasses);
-
+  // hide marking info and show history menu
   document.querySelector('#history').classList.remove('hidden');
   document.querySelector('#marking-instructions').classList.add('hidden');
 
@@ -236,14 +252,16 @@ document.querySelector('#history-date').addEventListener('change', async e => {
   }
 
   if (data.length === 0) {
+    // show no data message
     document.querySelector('#no-data').classList.remove('hidden');
     loading(false);
     return;
   }
-
+  // hide no data message if there is data
   document.querySelector('#no-data').classList.add('hidden');
 
   for (const timeObj of data) {
+    // add time options to dropdown
     const newEl = document.createElement('option');
     newEl.value = timeObj.time;
 
@@ -268,7 +286,7 @@ document.querySelector('#history-date').addEventListener('change', async e => {
     newEl.appendChild(document.createTextNode(timeString));
     document.querySelector('#history-time-select').appendChild(newEl);
   }
-
+  // load history for selected date and first time
   const timeString = document.querySelector('#history-time-select').value;
   loadHistory(e.target.value, timeString);
 
@@ -276,11 +294,17 @@ document.querySelector('#history-date').addEventListener('change', async e => {
 });
 
 document.querySelector('#history-time-select').addEventListener('change', e => {
+  // clear screen and load history for selected time
   document.querySelector('#flex-container').replaceChildren();
   const dateString = document.querySelector('#history-date').value;
   loadHistory(dateString, e.currentTarget.value);
 });
 
+/**
+ * Load attendance history for specific date and time
+ * @param {string} dateString
+ * @param {string} timeString
+ */
 async function loadHistory(dateString, timeString) {
   loading(true);
 
@@ -347,15 +371,15 @@ document.querySelector('#import').addEventListener('submit', async e => {
 
   const formData = new FormData(e.target);
   const images = formData.getAll('images');
-  let imagesMap = {};
-  let imagePromises = [];
+  let imagesMap = {}; // map filename to cloudinary id
+  let imagePromises = []; // promises for cloudinary uploads
   const csv = formData.get('csv');
 
   images.forEach(img => {
     const p = uploadImage(img)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
+        // console.log(res); // for debugging
         imagesMap[img.name] = res.public_id.split('/')[1];
       });
 
@@ -369,6 +393,7 @@ document.querySelector('#import').addEventListener('submit', async e => {
     header: true,
     skipEmptyLines: true,
     transformHeader: h => {
+      // rename headers
       if (h === "Student's Legal Name") {
         return 'First';
       } else if (h === 'LASTH') {
@@ -381,8 +406,6 @@ document.querySelector('#import').addEventListener('submit', async e => {
       return h;
     },
     complete: async r => {
-      // console.log(r);
-
       if (r.errors.length > 0) {
         r.errors.forEach(e => console.error(e.message + ' on row ' + e.row));
         loading(false);
@@ -390,13 +413,12 @@ document.querySelector('#import').addEventListener('submit', async e => {
         return;
       }
 
+      // transform data for upload to database
       const students = r.data.map(v => ({
         name: v.First + ' ' + v.Last,
         hebrew: v['Hebrew first'] + ' ' + v['Hebrew last'],
         photo_url: imagesMap[v['File name']] || null
       }));
-
-      // console.log(students);
 
       const { error } = await supabase
         .from('Students')
@@ -416,9 +438,15 @@ document.querySelector('#import').addEventListener('submit', async e => {
   });
 });
 
+/**
+ * Upload image to cloudinary
+ * @param {File} image
+ * @returns {Promise<Response>}
+ */
 function uploadImage(image) {
   console.log('upload started');
   const formData = new FormData();
+  // the students upload preset resizes to 68x68 and crops to detected face
   formData.append('upload_preset', 'students');
   formData.append('file', image);
 
@@ -428,6 +456,10 @@ function uploadImage(image) {
   });
 }
 
+/**
+ * Show/hide loading indicator
+ * @param {boolean} show - show loading indicator
+ */
 function loading(show) {
   if (show) {
     document.querySelector('#loading').classList.remove('hidden');
