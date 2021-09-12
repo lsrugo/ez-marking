@@ -31,9 +31,6 @@ document.querySelector('#signin').addEventListener('submit', async e => {
     loading(false);
     return
   }
-  
-  e.target.classList.add('hidden');
-  loadStudents(markStudent);
 });
 
 supabase.auth.onAuthStateChange((event, session) => {
@@ -42,6 +39,8 @@ supabase.auth.onAuthStateChange((event, session) => {
     console.log('signed in as', session.user.email);
     // hide sign in element if signed in
     document.querySelector('#signin').classList.add('hidden');
+    
+    console.log('loading students')
     loadStudents(markStudent);
   }
 })
@@ -69,6 +68,15 @@ document.querySelector('#signOut').addEventListener('click', async () => {
  * @param {function} clickFunction - click handler for each student card element
  */
 async function loadStudents(clickFunction) {
+  // check if already loaded
+  const container = document.querySelector('#flex-container')
+  console.log('number of loaded students', container.childElementCount)
+  if (container.childElementCount > 0) {
+    // don't load students if they are already present
+    console.log('students already loaded')
+    return
+  }
+
   loading(true);
 
   // select all students ordered by hebrew last name
@@ -180,7 +188,7 @@ document.querySelector('#students-form').addEventListener('submit', async e => {
   }
 
   // clear screen and reload all students
-  document.querySelector('#flex-container').replaceChildren();
+  document.querySelector('#flex-container').replaceChildren('');
   loadStudents(markStudent);
 });
 
@@ -208,7 +216,7 @@ document.querySelector('#home-button').addEventListener('click', e => {
   document.querySelector('#marking-instructions').classList.remove('hidden');
 
   // reload students with marking
-  document.querySelector('#flex-container').replaceChildren();
+  document.querySelector('#flex-container').replaceChildren('');
   loadStudents(markStudent);
 });
 
@@ -224,17 +232,17 @@ document.querySelector('#history-button').addEventListener('click', e => {
   document.querySelector('#marking-instructions').classList.add('hidden');
 
   // clear students
-  document.querySelector('#flex-container').replaceChildren();
+  document.querySelector('#flex-container').replaceChildren('');
 });
 
 document.querySelector('#history-date').addEventListener('change', async e => {
   loading(true);
 
   // clear time selector
-  document.querySelector('#history-time-select').replaceChildren();
+  document.querySelector('#history-time-select').replaceChildren('');
 
   // clear students
-  document.querySelector('#flex-container').replaceChildren();
+  document.querySelector('#flex-container').replaceChildren('');
 
   // if clear button was pressed on date picker
   if (!e.currentTarget.value) {
@@ -295,7 +303,7 @@ document.querySelector('#history-date').addEventListener('change', async e => {
 
 document.querySelector('#history-time-select').addEventListener('change', e => {
   // clear screen and load history for selected time
-  document.querySelector('#flex-container').replaceChildren();
+  document.querySelector('#flex-container').replaceChildren('');
   const dateString = document.querySelector('#history-date').value;
   loadHistory(dateString, e.currentTarget.value);
 });
