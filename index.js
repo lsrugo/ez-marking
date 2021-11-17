@@ -15,7 +15,8 @@ document.querySelector('#signin').addEventListener('submit', async e => {
 
   const { user, error } = await supabase.auth.signIn({
     email: e.target.querySelector('input[type="email"]').value,
-    password: e.target.querySelector('input[type="password"]').value
+    // sign in is always with magic link
+    // password: e.target.querySelector('input[type="password"]').value
   });
   
   if (error) {
