@@ -51,6 +51,12 @@ if (!supabase.auth.user()) {
   console.log('not signed in');
   document.querySelector('#loading').classList.add('hidden');
   // sign in screen is already visible by default
+
+  // check for error parameter in url
+  const error = new URLSearchParams(window.location.search).get('error_description');
+  if (error) {
+    document.querySelector('#signin-message').textContent = `${error}. Please try again.` ;
+  }
 }
 
 document.querySelector('#signOut').addEventListener('click', async () => {
