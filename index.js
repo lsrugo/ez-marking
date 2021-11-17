@@ -53,7 +53,7 @@ if (!supabase.auth.user()) {
   // sign in screen is already visible by default
 
   // check for error parameter in url
-  const error = new URLSearchParams(window.location.search).get('error_description');
+  const error = new URLSearchParams(window.location.hash).get('error_description');
   if (error) {
     document.querySelector('#signin-message').textContent = `${error}. Please try again.` ;
   }
